@@ -9,7 +9,7 @@
     "compile": "truffle compile",
     "console": "truffle dev",
     "coverage": "SOLIDITY_COVERAGE=true npm run ganache-cli:test",
-    "dev": "npm run sync-assets && parcel app/index.html --port 3333",
+    "dev": "run-p sync-assets watch:script watch:app",
     "ganache-cli:test": "../shared/test-helpers/ganache-cli.sh",
     "lint": "solium --dir ./contracts",
     "prepublishOnly": "truffle compile --all",
@@ -21,7 +21,9 @@
     "start": "aragon run",
     "sync-assets": "copy-aragon-ui-assets ./dist",
     "test:gas": "GAS_REPORTER=true npm test",
-    "test": "TRUFFLE_TEST=true npm run ganache-cli:test"
+    "test": "TRUFFLE_TEST=true npm run ganache-cli:test",
+    "watch:app": "parcel app/index.html --port 3333",
+    "watch:script": "parcel watch app/script.js -d dist/"
   },
   "dependencies": {
     "@aragon/api": "1.0.0",
@@ -36,9 +38,9 @@
     "marked": "0.6.1",
     "ipfs-http-client": "29.1.0",
     "prop-types": "15.6.2",
-    "react": "^16.7.0",
+    "react": "^16.8.6",
     "react-apollo": "^2.3.2",
-    "react-dom": "^16.7.0",
+    "react-dom": "^16.8.6",
     "react-number-format": "3.5.2",
     "react-render-html": "^0.6.0",
     "styled-components": "4.1.3"
@@ -59,7 +61,8 @@
     "eslint-plugin-react": "7.11.1",
     "parcel-bundler": "1.9.7",
     "prettier": "1.14.2",
-    "react-hot-loader": "4.3.6",
+    "react-devtools": "^3.6.1",
+    "react-hot-loader": "^4.8.3", "^4.8.3",
     "stylelint": "9.5.0",
     "stylelint-config-standard": "18.2.0",
     "stylelint-config-styled-components": "0.1.1",
