@@ -1,14 +1,10 @@
+import './utils/devTooling'
 import React from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM from '@hot-loader/react-dom'
 import Aragon, { providers } from '@aragon/api'
 import App from './components/App/App'
 
 // import { projectsMockData } from './utils/mockData'
-
-// if (process.env.NODE_ENV !== 'production') {
-//   const { whyDidYouUpdate } = require('why-did-you-update')
-//   whyDidYouUpdate(React)
-// }
 
 // TODO: Convert to stateless functional component
 class ConnectedApp extends React.Component {
