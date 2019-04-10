@@ -9,9 +9,8 @@ import { AragonApi } from '@aragon/api-react'
 // import { projectsMockData } from './utils/mockData'
 import App from './components/App/App'
 
-ReactDOM.render(
+ReactDOM.unstable_createRoot(document.querySelector('#projects')).render(
   <AragonApi /*reducer={appStateReducer}*/>
     <App />
-  </AragonApi>,
-  document.querySelector('#projects')
+  </AragonApi>
 )

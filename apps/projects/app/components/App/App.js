@@ -36,13 +36,14 @@ const ProjectsApp = ({
   bountySettings = {},
   github = { status: STATUS.INITIAL },
   issues = [],
+  network = {},
   repos = [],
   tokens = [],
 }) => {
   const [ screen, setScreen ] = useState(0)
   const [ panel, setPanel ] = useState()
   const [ panelProps, setPanelProps ] = useState()
-  const [ currentGithubUser, setCurrentGithubUser ] = useState()
+  const [ currentGithubUser, setCurrentGithubUser ] = useState({})
   const [ popup, setPopup ] = useState()
   const [ githubLoading, setGithubLoading ] = useState(false)
   const [ apolloClient, setApolloClient ] = useState(
@@ -64,7 +65,7 @@ const ProjectsApp = ({
         '*'
       )
     window.close()
-  })
+  }, [])
 
   useEffect(
     () => {
@@ -74,10 +75,12 @@ const ProjectsApp = ({
           const data = await client.query({
             query: CURRENT_USER,
           })
+          console.log('Apollo init', data)
           setApolloClient(client)
           setCurrentGithubUser(data.viewer)
         }
       }
+      console.log('Github user connected')
       initializeApollo()
     },
     [github]
@@ -274,27 +277,59 @@ const ProjectsApp = ({
   const contentData = [
     {
       tabName: 'Overview',
-      TabComponent: Overview,
+      ScreenComponent: Overview,
       tabButton: {
         caption: 'New Project',
         onClick: newProject,
         disabled: () => false,
         hidden: () => false,
       },
+      screenProps: {
+        changeActiveIndex: setScreen,
+        onLogin: handleGithubSignIn,
+        onNewProject: newProject,
+        onRemoveProject: onRemoveProject,
+        projects: repos,
+        status: github.status,
+        githubLoading: githubLoading,
+      },
     },
     {
       tabName: 'Issues',
-      TabComponent: Issues,
+      ScreenComponent: Issues,
       tabButton: {
         caption: 'New Issue',
         onClick: newIssue,
         disabled: () => (projects.length ? false : true),
         hidden: () => (projects.length ? false : true),
       },
+      screenProps: {
+        bountyIssues: issues,
+        bountySettings: bountySettings,
+        onAllocateBounties: newBountyAllocation,
+        // onCurateIssues={curateIssues}
+        onLogin: handleGithubSignIn,
+        onNewIssue: newIssue,
+        // onReviewApplication={reviewApplication}
+        // onRequestAssignment={requestAssignment}
+        onReviewWork: reviewWork,
+        // onSubmitWork={submitWork}
+        tokens: tokens,
+        status: github.status,
+      },
     },
     {
       tabName: 'Settings',
-      TabComponent: Settings,
+      ScreenComponent: Settings,
+      screenProps: {
+        api,
+        bountySettings,
+        currentGithubUser,
+        network,
+        tokens,
+        onLogin: handleGithubSignIn,
+        status: github.status,
+      },
     },
   ]
 
@@ -302,6 +337,8 @@ const ProjectsApp = ({
     github.status === STATUS.AUTHENTICATED && contentData[screen].tabButton
       ? contentData[screen].tabButton
       : null
+
+  const { ScreenComponent, screenProps } = contentData[screen]
 
   return (
     <Main assetsUrl="./aragon-ui">
@@ -315,34 +352,11 @@ const ProjectsApp = ({
       )}
       <AppView
         title="Projects"
-        tabs={<TabBar items={SCREENS} selected={screen} onSelect={setScreen} />}
+        tabs={<TabBar items={SCREENS} selected={screen} onChange={setScreen} />}
       >
         <ApolloProvider client={apolloClient}>
           <ErrorBoundary>
-            <AppContent
-              activeIndex={screen}
-              app={api}
-              bountyIssues={issues}
-              bountySettings={bountySettings}
-              changeActiveIndex={setScreen}
-              contentData={contentData}
-              githubCurrentUser={currentGithubUser}
-              githubLoading={githubLoading}
-              onAllocateBounties={newBountyAllocation}
-              // onCurateIssues={curateIssues}
-              onLogin={handleGithubSignIn}
-              onNewIssue={newIssue}
-              onNewProject={newProject}
-              // onReviewApplication={reviewApplication}
-              onRemoveProject={onRemoveProject}
-              // onRequestAssignment={requestAssignment}
-              onReviewWork={reviewWork}
-              // onSubmitWork={submitWork}
-              projects={repos}
-              status={github.status}
-              tokens={tokens}
-            />
-
+            <ScreenComponent {...screenProps} />
             <PanelManager
               onClose={closePanel}
               activePanel={panel}

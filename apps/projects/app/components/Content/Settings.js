@@ -21,8 +21,8 @@ const bountyDeadlinesMul = [ 168, 24, 1 ] // it is one variable in contract, so 
 
 class Settings extends React.Component {
   static propTypes = {
-    app: PropTypes.object.isRequired,
-    githubCurrentUser: PropTypes.object, // TODO: is this required?
+    api: PropTypes.object.isRequired,
+    currentGithubUser: PropTypes.object, // TODO: is this required?
     network: PropTypes.object,
     onLogin: PropTypes.func.isRequired,
     status: PropTypes.string.isRequired,
@@ -93,7 +93,7 @@ class Settings extends React.Component {
     const expLevelsDesc = expLevels.map(l => fromUtf8(l.name))
     let expLevelsMul = expLevels.map(l => web3.toHex(l.mul))
     console.log('Submitting new Settings: ', {
-      lvlMul:expLevelsMul,
+      lvlMul: expLevelsMul,
       lvl: expLevelsDesc,
       rate: web3.toHex(baseRate),
       ddl: web3.toHex(bountyDeadline),
@@ -103,13 +103,13 @@ class Settings extends React.Component {
     })
 
     //expLevels, baseRate, bountyDeadline, bountyCurrency, bountyAllocator, bountyArbiter
-    this.props.app.changeBountySettings(
+    this.props.api.changeBountySettings(
       expLevelsMul,
       expLevelsDesc,
       web3.toHex(baseRate),
       web3.toHex(bountyDeadline),
       bountyCurrencies[bountyCurrency],
-      bountyAllocator,
+      bountyAllocator
       //bountyArbiter,
     )
   }
@@ -147,7 +147,7 @@ class Settings extends React.Component {
   }
 
   handleLogout = () => {
-    this.props.app.cache('github', { status: STATUS.INITIAL })
+    this.props.api.cache('github', { status: STATUS.INITIAL })
   }
 
   render() {
@@ -175,7 +175,9 @@ class Settings extends React.Component {
             onLogin={this.props.onLogin}
             onLogout={this.handleLogout}
             status={this.props.status}
-            user={this.props.githubCurrentUser.login}
+            user={
+              this.props.currentGithubUser && this.props.currentGithubUser.login
+            }
           />
           <ExperienceLevel
             expLevels={expLevels}
@@ -184,7 +186,7 @@ class Settings extends React.Component {
           />
 
           <Button mode="strong" onClick={this.submitChanges} wide>
-              Submit Changes
+            Submit Changes
           </Button>
         </div>
         <div className="column">
@@ -309,11 +311,18 @@ const EmptyBaseRate = () => (
     </Text.Block>
     <Text.Block>
       Once you have tokens in your Finance App you will be able to set your
-      bounty base rate, which provides you with the ability to allocate bounties to issues.
+      bounty base rate, which provides you with the ability to allocate bounties
+      to issues.
     </Text.Block>
   </div>
 )
-const BaseRate = ({ baseRate, onChangeRate, bountyCurrency, onChangeCurrency, bountyCurrencies }) => (
+const BaseRate = ({
+  baseRate,
+  onChangeRate,
+  bountyCurrency,
+  onChangeCurrency,
+  bountyCurrencies,
+}) => (
   <div>
     <Text.Block size="large" weight="bold">
       Base Rate
@@ -394,8 +403,8 @@ const ExperienceLevel = ({
       <Text.Block>Define the experience level multipliers.</Text.Block>
       {expLevels.map((exp, index) => (
         <Field key={index} label={'LEVEL ' + index}>
-          <NumberFormat
-            customInput={StyledNumberInput}
+          <StyledNumberInput
+            // customInput={StyledNumberInput}
             fixedDecimalScale
             decimalScale={2}
             value={exp.mul}
@@ -420,7 +429,7 @@ const ExperienceLevel = ({
   )
 }
 
-const StyledNumberInput = styled(TextInput)`
+const StyledNumberInput = styled(NumberFormat)`
   height: 40px;
   width: 131px;
   margin-right: 10px;

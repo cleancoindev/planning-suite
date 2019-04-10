@@ -43,14 +43,13 @@ class Issues extends React.PureComponent {
     reload: false,
     currentIssue: {},
     showIssueDetail: false,
+    tabData: {},
   }
 
   componentWillMount() {
-    if ('filterIssuesByRepoId' in this.props.activeIndex.tabData) {
-      const { filters } = this.state
-      filters.projects[
-        this.props.activeIndex.tabData.filterIssuesByRepoId
-      ] = true
+    const { filters, tabData } = this.state
+    if ('filterIssuesByRepoId' in tabData) {
+      filters.projects[tabData.filterIssuesByRepoId] = true
       this.setState({ filters })
     }
   }
@@ -100,7 +99,10 @@ class Issues extends React.PureComponent {
 
   handleFiltering = filters => {
     // TODO: why is reload necessary?
-    this.setState(prevState => ({ filters: filters, reload: !prevState.reload }))
+    this.setState(prevState => ({
+      filters: filters,
+      reload: !prevState.reload,
+    }))
   }
 
   handleSorting = sortBy => {
@@ -160,13 +162,14 @@ class Issues extends React.PureComponent {
       if (Object.keys(filters.statuses).length === 0) return true
       // should bountyless issues pass?
 
-      const status = bountyIssueObj[issue.number] ? bountyIssueObj[issue.number] : 'not-funded'
+      const status = bountyIssueObj[issue.number]
+        ? bountyIssueObj[issue.number]
+        : 'not-funded'
       if ('not-funded' in filters.statuses && !bountyIssueObj[issue.number])
         return true
       // if issues without a status should not pass, they are rejected below
       if (status === 'not-funded') return false
-      if (status in filters.statuses)
-        return true
+      if (status in filters.statuses) return true
       return false
     })
 
@@ -207,7 +210,7 @@ class Issues extends React.PureComponent {
     this.setState({ showIssueDetail: false, currentIssue: null })
   }
 
-  disableFilter = (pathToFilter) => {
+  disableFilter = pathToFilter => {
     let newFilters = { ...this.state.filters }
     recursiveDeletePathFromObject(pathToFilter, newFilters)
     this.setState({ filters: newFilters })
@@ -222,17 +225,18 @@ class Issues extends React.PureComponent {
         deadlines: {},
         experiences: {},
         statuses: {},
-      }
+      },
     })
   }
 
-  actionsMenu = (issues) => (
+  actionsMenu = issues => (
     <div
       style={{
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'flex-end'
-      }}>
+        alignItems: 'flex-end',
+      }}
+    >
       <TextInput placeholder="Search Issues" onChange={this.handleTextFilter} />
       <ActiveFilters
         issues={issues}
@@ -264,7 +268,7 @@ class Issues extends React.PureComponent {
     </div>
   )
 
-  setParentFilters = (filters) => {
+  setParentFilters = filters => {
     this.setState(filters)
   }
 
@@ -282,7 +286,8 @@ class Issues extends React.PureComponent {
         activeIndex={this.props.activeIndex}
         bountyIssues={this.props.bountyIssues}
       />
-    )}
+    )
+  }
 
   queryLoading = () => (
     <StyledIssues>
@@ -346,7 +351,7 @@ class Issues extends React.PureComponent {
           repo: name,
           symbol: tokenObj[data.token].symbol,
           expLevel: expLevels[data.exp].name,
-          balance: balance
+          balance: balance,
         }
       }
       return {
@@ -367,10 +372,9 @@ class Issues extends React.PureComponent {
       }
     else if (what === 'Creation Date')
       return (i1, i2) => {
-        return direction == 1 ?
-          compareAsc(new Date(i1.createdAt), new Date(i2.createdAt))
-          :
-          compareDesc(new Date(i1.createdAt), new Date(i2.createdAt))
+        return direction == 1
+          ? compareAsc(new Date(i1.createdAt), new Date(i2.createdAt))
+          : compareDesc(new Date(i1.createdAt), new Date(i2.createdAt))
       }
   }
 
@@ -378,17 +382,13 @@ class Issues extends React.PureComponent {
     if (this.props.status === STATUS.INITIAL) {
       return <Unauthorized onLogin={this.props.onLogin} />
     }
-    const {
-      projects,
-      onNewProject,
-    } = this.props
+    const { projects, onNewProject } = this.props
     const { currentIssue, showIssueDetail } = this.state
 
     // better return early if we have no projects added?
     if (projects.length === 0) return <Empty action={onNewProject} />
 
     if (showIssueDetail) {
-
       currentIssue.repository = {
         name: currentIssue.repo,
         id: currentIssue.repoId,
@@ -400,7 +400,6 @@ class Issues extends React.PureComponent {
       return (
         <IssueDetail
           issue={currentIssueShaped}
-
           onClose={this.handleIssueDetailClose}
           onReviewApplication={() => {
             this.handleReviewApplication(currentIssueShaped)
