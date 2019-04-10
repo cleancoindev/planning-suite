@@ -354,16 +354,16 @@ const ProjectsApp = ({
         title="Projects"
         tabs={<TabBar items={SCREENS} selected={screen} onChange={setScreen} />}
       >
-        <ApolloProvider client={apolloClient}>
-          <ErrorBoundary>
-            <ScreenComponent {...screenProps} />
-            <PanelManager
-              onClose={closePanel}
-              activePanel={panel}
-              {...panelProps}
-            />
-          </ErrorBoundary>
-        </ApolloProvider>
+        {/* <ApolloProvider client={apolloClient}> */}
+        <ErrorBoundary>
+          <ScreenComponent {...screenProps} />
+          <PanelManager
+            onClose={closePanel}
+            activePanel={panel}
+            {...panelProps}
+          />
+        </ErrorBoundary>
+        {/* </ApolloProvider> */}
       </AppView>
     </Main>
   )
