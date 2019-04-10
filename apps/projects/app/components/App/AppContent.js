@@ -3,8 +3,6 @@ import React from 'react'
 
 import { STATUS } from '../../utils/github'
 import { TabbedView, TabBar, TabContent, Tab } from '../TabbedView'
-import { Issues, Overview, Settings } from '../Content'
-import AppTitleButton from '../App/AppTitleButton'
 
 // TODO: improve structure:
 /*
@@ -21,51 +19,11 @@ import AppTitleButton from '../App/AppTitleButton'
 
 // TODO: Dynamic component loading
 
-const AppContent = ({ activeIndex, ...props }) => {
+const AppContent = ({ activeIndex, contentData, ...props }) => {
   console.log('AppContent tokens: ', props.tokens)
-  const contentData = [
-    {
-      tabName: 'Overview',
-      TabComponent: Overview,
-      tabButton: {
-        caption: 'New Project',
-        onClick: props.onNewProject,
-        disabled: () => false,
-        hidden: () => false,
-      },
-    },
-    {
-      tabName: 'Issues',
-      TabComponent: Issues,
-      tabButton: {
-        caption: 'New Issue',
-        onClick: props.onNewIssue,
-        disabled: () => (props.projects.length ? false : true),
-        hidden: () => (props.projects.length ? false : true),
-      },
-    },
-    {
-      tabName: 'Settings',
-      TabComponent: Settings,
-    },
-  ]
-
-  const appTitleButton =
-    props.status === STATUS.AUTHENTICATED && contentData[activeIndex].tabButton
-      ? contentData[activeIndex].tabButton
-      : null
 
   return (
     <React.Fragment>
-      {appTitleButton &&
-        !appTitleButton.hidden() && (
-        <AppTitleButton
-          caption={appTitleButton.caption}
-          onClick={appTitleButton.onClick}
-          disabled={appTitleButton.disabled()}
-        />
-      )}
-
       {/* <TabbedView
         activeIndex={props.activeIndex}
         changeActiveIndex={props.changeActiveIndex}

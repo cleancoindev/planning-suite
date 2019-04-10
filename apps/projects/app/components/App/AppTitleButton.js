@@ -28,24 +28,26 @@ const StyledPlus = styled.button`
 
 const AppTitleButton = props => (
   <Viewport>
-    {({ below, width }) => below('small') ? (
-      <StyledPlus {...props}>
-        <svg width="24px" height="24px" viewBox="0 0 24 24" {...props}>
-          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-          <path d="M0 0h24v24H0z" fill="none" />
-        </svg>
-      </StyledPlus>
-    ) : (
-      <StyledButton mode="strong" {...props}>
-        {props.caption}
-      </StyledButton>
-    )}
+    {({ below, width }) =>
+      below('small') ? (
+        <StyledPlus {...props}>
+          <svg width="24px" height="24px" viewBox="0 0 24 24" {...props}>
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            <path d="M0 0h24v24H0z" fill="none" />
+          </svg>
+        </StyledPlus>
+      ) : (
+        <StyledButton mode="strong" {...props}>
+          {props.caption}
+        </StyledButton>
+      )
+    }
   </Viewport>
 )
 
 AppTitleButton.propTypes = {
   caption: PropTypes.string,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
 }
 
 const StyledButton = styled(Button)`
@@ -56,4 +58,3 @@ const StyledButton = styled(Button)`
 `
 
 export default AppTitleButton
-

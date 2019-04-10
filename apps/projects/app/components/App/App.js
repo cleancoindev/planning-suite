@@ -24,8 +24,9 @@ import {
 } from '../../utils/github'
 import { CURRENT_USER } from '../../utils/gql-queries'
 import { ipfsAdd, computeIpfsString } from '../../utils/ipfs-helpers'
+import { Issues, Overview, Settings } from '../Content'
 import PanelManager, { PANELS } from '../Panel'
-import { AppContent } from '.'
+import { AppContent, AppTitleButton } from '.'
 import ErrorBoundary from './ErrorBoundary'
 
 const SCREENS = [ 'Overview', 'Issues', 'Settings' ]
@@ -79,7 +80,7 @@ const ProjectsApp = ({
       }
       initializeApollo()
     },
-    [github.status]
+    [github]
   )
 
   const closePanel = () => {
@@ -94,6 +95,7 @@ const ProjectsApp = ({
   /**
    * Probably external candidate functions
    */
+
   const handlePopupMessage = async message => {
     if (message.data.from !== 'popup') return
     if (message.data.name === 'code') {
@@ -266,8 +268,51 @@ const ProjectsApp = ({
     setPanelProps({ issue, onReviewWork, currentGithubUser })
   }
 
+  /**
+   * Functions to refactor into memoized versions
+   */
+  const contentData = [
+    {
+      tabName: 'Overview',
+      TabComponent: Overview,
+      tabButton: {
+        caption: 'New Project',
+        onClick: newProject,
+        disabled: () => false,
+        hidden: () => false,
+      },
+    },
+    {
+      tabName: 'Issues',
+      TabComponent: Issues,
+      tabButton: {
+        caption: 'New Issue',
+        onClick: newIssue,
+        disabled: () => (projects.length ? false : true),
+        hidden: () => (projects.length ? false : true),
+      },
+    },
+    {
+      tabName: 'Settings',
+      TabComponent: Settings,
+    },
+  ]
+
+  const appTitleButton =
+    github.status === STATUS.AUTHENTICATED && contentData[screen].tabButton
+      ? contentData[screen].tabButton
+      : null
+
   return (
     <Main assetsUrl="./aragon-ui">
+      {appTitleButton &&
+        !appTitleButton.hidden() && (
+        <AppTitleButton
+          caption={appTitleButton.caption}
+          onClick={appTitleButton.onClick}
+          disabled={appTitleButton.disabled()}
+        />
+      )}
       <AppView
         title="Projects"
         tabs={<TabBar items={SCREENS} selected={screen} onSelect={setScreen} />}
@@ -280,6 +325,7 @@ const ProjectsApp = ({
               bountyIssues={issues}
               bountySettings={bountySettings}
               changeActiveIndex={setScreen}
+              contentData={contentData}
               githubCurrentUser={currentGithubUser}
               githubLoading={githubLoading}
               onAllocateBounties={newBountyAllocation}
