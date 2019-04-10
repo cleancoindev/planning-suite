@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { STATUS } from '../../utils/github'
 import { Project, Empty, Error } from '../Card'
 import Unauthorized from './Unauthorized'
-import { LoadingAnimation } from '../Shared'
+import { LoadingAnimation } from '../../../../../shared/ui'
 import { EmptyWrapper } from '../Shared'
 
 const Overview = ({
@@ -18,7 +18,11 @@ const Overview = ({
   githubLoading,
 }) => {
   if (githubLoading) {
-    return <EmptyWrapper><LoadingAnimation /></EmptyWrapper>
+    return (
+      <EmptyWrapper>
+        <LoadingAnimation />
+      </EmptyWrapper>
+    )
   } else if (status === STATUS.INITIAL) {
     return <Unauthorized onLogin={onLogin} />
   } else if (status === STATUS.FAILED) {

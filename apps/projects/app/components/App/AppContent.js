@@ -21,7 +21,7 @@ import AppTitleButton from '../App/AppTitleButton'
 
 // TODO: Dynamic component loading
 
-const AppContent = props => {
+const AppContent = ({ activeIndex, ...props }) => {
   console.log('AppContent tokens: ', props.tokens)
   const contentData = [
     {
@@ -50,22 +50,21 @@ const AppContent = props => {
     },
   ]
 
-  // const appTitleButton =
-  //   props.status === STATUS.AUTHENTICATED &&
-  //   contentData[props.activeIndex.tabIndex].tabButton
-  //     ? contentData[props.activeIndex.tabIndex].tabButton
-  //     : null
+  const appTitleButton =
+    props.status === STATUS.AUTHENTICATED && contentData[activeIndex].tabButton
+      ? contentData[activeIndex].tabButton
+      : null
 
   return (
     <React.Fragment>
-      {/* {appTitleButton &&
+      {appTitleButton &&
         !appTitleButton.hidden() && (
         <AppTitleButton
           caption={appTitleButton.caption}
           onClick={appTitleButton.onClick}
           disabled={appTitleButton.disabled()}
         />
-      )} */}
+      )}
 
       {/* <TabbedView
         activeIndex={props.activeIndex}
@@ -75,14 +74,13 @@ const AppContent = props => {
           {contentData.map(({ tabName }) => (
             <Tab key={tabName}>{tabName}</Tab>
           ))}
-        </TabBar>
-        <TabContent>
-          {contentData.map(({ TabComponent }, i) => (
-            <TabComponent key={i} {...props} />
-          ))}
-        </TabContent>
-      </TabbedView> */}
-      <div>Hello</div>
+        </TabBar> */}
+      <TabContent>
+        {contentData.map(({ TabComponent }, i) => (
+          <TabComponent key={i} {...props} />
+        ))}
+      </TabContent>
+      {/* </TabbedView> */}
     </React.Fragment>
   )
 }
@@ -94,7 +92,7 @@ AppContent.propTypes = {
   bountySettings: PropTypes.object.isRequired,
   onNewProject: PropTypes.func.isRequired,
   onNewIssue: PropTypes.func.isRequired,
-  // activeIndex: PropTypes.object.isRequired,
+  activeIndex: PropTypes.number.isRequired,
   changeActiveIndex: PropTypes.func.isRequired,
   status: PropTypes.string.isRequired,
 }
