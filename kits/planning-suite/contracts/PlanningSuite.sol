@@ -1,63 +1,23 @@
 pragma solidity 0.4.24;
 
-import "./PlanningKitBase.sol";
+import "./BetaKitBase.sol";
 
 
-contract PlanningSuite is PlanningKitBase {
-    uint64 constant PCT64 = 10 ** 16;
-
+contract PlanningSuite is BetaKitBase {
     constructor(
         DAOFactory _fac,
         ENS _ens,
         MiniMeTokenFactory _minimeFac,
         IFIFSResolvingRegistrar _aragonID,
         bytes32[4] _appIds,
-        bytes32[4] _planningAppIds, // TODO: 5 when adding rewards
+        bytes32[4] _planningAppIds,
         StandardBounties _registry
     )
-        PlanningKitBase(_fac, _ens, _minimeFac, _aragonID, _appIds, _planningAppIds, _registry)
+        BetaKitBase(_fac, _ens, _minimeFac, _aragonID, _appIds, _planningAppIds, _registry)
         public
     {
         // solium-disable-previous-line no-empty-blocks
     }
-
-    // function newTemplateInstance(string aragonId) public {
-        // MiniMeToken token = newToken("Autark Token", "autark");
-        // Kernel dao;
-        // ACL acl;
-        // Finance finance;
-        // Voting voting;
-
-        // // TODO: Improve this to avoid storage
-        // address[] memory holders;
-        // uint256[] memory stakes;
-
-        // holders[0] = address(msg.sender);
-        // holders[1] = address(this);
-
-        // stakes[0] = uint256(200 ether);
-        // stakes[1] = uint256(100 ether);
-
-
-        // (dao, acl, finance, , , voting) = createPlanningDAO(
-        //     aragonId,
-        //     token,
-        //     holders,
-        //     stakes,
-        //     uint256(-1)
-        // );
-
-        // TODO:
-        // finance.initialize(vault, 1 days);
-        // token.approve(finance, 100 ether);
-        // voting.initialize(token, 50 * PCT64, 10 * PCT64, 1 days);
-        // finance.deposit(token, 50 ether, "Initial token transfer pt 1");
-        // finance.deposit(token, 50 ether, "Initial token transfer pt 2");
-        
-        // TODO: customizable range voting time also
-
-        // TODO: Handle any extra permission or cleanup here
-    // }
 
     function newTokenAndInstance(
         string tokenName,
@@ -96,44 +56,52 @@ contract PlanningSuite is PlanningKitBase {
     function newInstance(
         string aragonId,
         address[] holders,
-        uint256[] stakes,
+        uint256[] tokens,
         uint64 supportNeeded,
         uint64 minAcceptanceQuorum,
         uint64 voteDuration
     )
         public
     {
-        require(voteDuration > 0, "VOTE_DURATION_IS_ZERO"); // TODO: remove it once we add it to Voting app
+        require(voteDuration > 0); // TODO: remove it once we add it to Voting app
+        require(holders.length == tokens.length);
 
         MiniMeToken token = popTokenCache(msg.sender);
         Kernel dao;
-        // ACL acl;
-        // Voting voting;
-        // RangeVoting rangeVoting;
+        ACL acl;
+        Voting voting;
+        TokenManager tokenManager;
+        // RangeVoting  rangeVoting;
+        
 
-        // (dao, acl, , , , voting) = createPlanningDAO(
-        (dao/*, , , , voting*/) = createPlanningDAO(
+        (dao, acl, , , , , , , tokenManager, voting) = createDAO(
             aragonId,
-            token,
-            holders,
-            stakes,
-            uint256(-1)
+            token
         );
 
-        // voting.initialize(
-        //     token,
-        //     supportNeeded,
-        //     minAcceptanceQuorum,
-        //     voteDuration
-        // );
+        // Required for initializing the Token Manager
+        token.changeController(tokenManager);
+        tokenManager.initialize(token, uint256(-1) > 1, uint256(-1));
 
-        // TODO: Here we should initialize custom range Voting params:
-        // rangeVoting.initialize(token, 50 * PCT256, 0, 1 minutes);
-        // (currently handled upstream by PlanningKitBase)
+        // Set up the token stakes
+        acl.createPermission(this, tokenManager, tokenManager.MINT_ROLE(), this);
+
+        for (uint256 i = 0; i < holders.length; i++) {
+            tokenManager.mint(holders[i], tokens[i]);
+        }
+
+        voting.initialize(
+            token,
+            supportNeeded,
+            minAcceptanceQuorum,
+            voteDuration
+        );
 
         // burn support modification permission
-        // acl.createBurnedPermission(voting, voting.MODIFY_SUPPORT_ROLE());
+        acl.createBurnedPermission(voting, voting.MODIFY_SUPPORT_ROLE());
 
-        // cleanupPermission(acl, voting, acl, acl.CREATE_PERMISSIONS_ROLE());
+        cleanupPermission(acl, voting, acl, acl.CREATE_PERMISSIONS_ROLE());
+
+        cleanupPermission(acl, voting, tokenManager, tokenManager.MINT_ROLE());
     }
 }

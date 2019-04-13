@@ -32,7 +32,6 @@ const planningApps = [
   'allocations',
   'projects',
   'range-voting',
-  'rewards',
 ]
 const planningAppIds = planningApps.map(app =>
   namehash(require(`@tps/apps-${app}/arapp`).environments.default.appName)
@@ -74,11 +73,10 @@ const getKitConfiguration = async networkName => {
   const repo = getContract('Repo').at(repoAddr)
   console.log('[getConfiguration] apm repo address:', repoAddr)
   const kitAddress = (await repo.getLatest())[1]
-  const kitContractName = arappFile.path
-    .split('/')
-    .pop()
-    .split('.sol')[0]
+  const kitContractName = arappFile.path.split('/').pop().split('.sol')[0]
   const kit = getContract(kitContractName).at(kitAddress)
+  console.log('[kit contract name:', kitContractName)
+  console.log('[kit address:', kitAddress)
   return { ens, kit }
 }
 
@@ -93,9 +91,8 @@ contract('Planning Suite', accounts => {
   let addressBookAddress,
     allocationsAddress,
     projectsAddress,
-    rangeVotingAddress,
-    rewardsAddress
-  let addressBook, allocations, projects, rangeVoting, rewards
+    rangeVotingAddress
+  let addressBook, allocations, projects, rangeVoting
 
   let kit, receiptInstance
 
@@ -111,7 +108,7 @@ contract('Planning Suite', accounts => {
 
   before(async () => {
     // create Planning Suite Kit
-    // console.log(networks)
+
     const networkName = (await getNetwork(networks)).name
     //if (networkName == 'devnet' || networkName == 'rpc') {
     //  // transfer some ETH to other accounts
@@ -171,13 +168,13 @@ contract('Planning Suite', accounts => {
           )
           tokenAddress = getEventResult(receiptInstance, 'DeployToken', 'token')
           daoAddress = getEventResult(receiptInstance, 'DeployInstance', 'dao')
+          
         } else if (creationStyle === 'separate') {
           // create Token
           const receiptToken = await kit.newToken(tokenName, tokenSymbol)
           console.log('got here')
           // console.log(accounts)
           tokenAddress = getEventResult(receiptToken, 'DeployToken', 'token')
-
           console.log('Creating instance:', {
             aragonId,
             holders,
@@ -185,7 +182,6 @@ contract('Planning Suite', accounts => {
             neededSupport,
             minimumAcceptanceQuorum,
             votingTime,
-            owner,
           })
 
           // create Instance
@@ -196,9 +192,9 @@ contract('Planning Suite', accounts => {
             neededSupport,
             minimumAcceptanceQuorum,
             votingTime,
-            { from: owner }
           )
           daoAddress = getEventResult(receiptInstance, 'DeployInstance', 'dao')
+          console.log('dao address:', daoAddress)
         }
 
         // // generated apps
