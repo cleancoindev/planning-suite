@@ -5,11 +5,12 @@ const deployKit = require('./deploy_kit.js')
 // in `ENS` env variable
 module.exports = async callback => {
   const environment = process.argv[4]
+  console.log('environment: ',environment)
   const network = environment === 'default' ? 'rpc' : 'rinkeby'
   const deployConfig = {
     artifacts,
     kitName: 'planning-suite',
-    kitContractName: 'PlanningSuite',
+    kitContractName: 'PlanningKit',
     // returnKit: true,
     network: network,
   }

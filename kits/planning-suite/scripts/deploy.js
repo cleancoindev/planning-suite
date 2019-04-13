@@ -27,7 +27,7 @@ module.exports = async callback => {
   await deploy_kit(null, {
     artifacts,
     kitName: 'planning-suite',
-    kitContractName: 'PlanningSuite',
+    kitContractName: 'PlanningKit',
     network: network,
     ensAddress: ens.address,
   })

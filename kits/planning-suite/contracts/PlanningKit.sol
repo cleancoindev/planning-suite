@@ -87,23 +87,18 @@ contract PlanningKit is KitBase {
     function newInstance() public {
         Kernel dao = fac.newDAO(this);
         ACL acl = ACL(dao.acl());
-
         bytes32 appManagerRole = dao.APP_MANAGER_ROLE();
         acl.createPermission(this, dao, appManagerRole, this);
         address root = msg.sender;
         Vault vault;
         Voting voting;
-
         (vault, voting) = createA1Apps(root, acl, dao);
-
         createTPSApps(root, dao, vault, voting);
-
-        //handleCleanupPermissions(dao, acl, root);
-
+        handleCleanupPermissions(dao, acl, root);
         emit DeployInstance(dao);
     }
 
-    function createA1Apps(address root, ACL acl, Kernel dao) internal returns(
+    function createA1Apps(address root, ACL acl, Kernel dao) public returns(
         Vault vault,
         Voting voting
     )
@@ -116,14 +111,12 @@ contract PlanningKit is KitBase {
             apmNamehash("finance"),         // 2
             apmNamehash("voting")           // 3
         ];
-
         // Aragon Apps
         tokenManager = TokenManager(dao.newAppInstance(apps[0], latestVersionAppBase(apps[0])));
         vault = Vault(dao.newAppInstance(apps[1], latestVersionAppBase(apps[1])));
         finance = Finance(dao.newAppInstance(apps[2], latestVersionAppBase(apps[2])));
         voting = Voting(dao.newAppInstance(apps[3], latestVersionAppBase(apps[3])));
 
-        // MiniMe Token
         initializeA1Apps(root, tokenManager, vault, finance, voting);
         handleA1Permissions(
             dao,
@@ -144,7 +137,6 @@ contract PlanningKit is KitBase {
         Voting voting
     ) internal
     {
-
         token.changeController(tokenManager);
         // Initialize A1 apps
         tokenManager.initialize(token, true, 0);
@@ -166,9 +158,8 @@ contract PlanningKit is KitBase {
         Voting voting
     ) internal
     {
-
         // Token Manager permissions
-        acl.createPermission(ANY_ENTITY, tokenManager, tokenManager.MINT_ROLE(), this);
+        acl.createPermission(ANY_ENTITY, tokenManager, tokenManager.MINT_ROLE(), root);
         acl.createPermission(ANY_ENTITY, tokenManager, tokenManager.ISSUE_ROLE(), root);
         acl.createPermission(ANY_ENTITY, tokenManager, tokenManager.ASSIGN_ROLE(), root);
         acl.createPermission(ANY_ENTITY, tokenManager, tokenManager.REVOKE_VESTINGS_ROLE(), root);
@@ -192,15 +183,15 @@ contract PlanningKit is KitBase {
         Projects projects;
         RangeVotingApp rangeVoting;
         Allocations allocations;
-        Rewards rewards;
+        //Rewards rewards;
 
 
-        bytes32[5] memory apps = [
+        bytes32[4] memory apps = [
             apmNamehash("address-book"),    // 0
             apmNamehash("projects"),        // 1
             apmNamehash("range-voting"),    // 2
-            apmNamehash("allocations"),     // 3
-            apmNamehash("rewards")          // 4
+            apmNamehash("allocations")//,     // 3
+            //apmNamehash("rewards")          // 4
         ];
 
         // Planning Apps
@@ -208,22 +199,22 @@ contract PlanningKit is KitBase {
         projects = Projects(dao.newAppInstance(apps[1], latestVersionAppBase(apps[1])));
         rangeVoting = RangeVotingApp(dao.newAppInstance(apps[2], latestVersionAppBase(apps[2])));
         allocations = Allocations(dao.newAppInstance(apps[3], latestVersionAppBase(apps[3])));
-        rewards = Rewards(dao.newAppInstance(apps[4], latestVersionAppBase(apps[4])));
-        initializeTPSApps(addressBook, projects, rangeVoting, allocations, rewards, vault);
+        //rewards = Rewards(dao.newAppInstance(apps[4], latestVersionAppBase(apps[4])));
+        initializeTPSApps(addressBook, projects, rangeVoting, allocations, /*rewards,*/ vault);
         handleTPSPermissions(
             dao,
             addressBook,
             projects,
             rangeVoting,
             allocations,
-            rewards,
+            //rewards,
             voting
         );
         handleVaultPermissions(
             dao,
             projects,
             allocations,
-            rewards,
+            //rewards,
             vault
         );
 
@@ -234,7 +225,7 @@ contract PlanningKit is KitBase {
         Projects projects,
         RangeVotingApp rangeVoting,
         Allocations allocations,
-        Rewards rewards,
+        //Rewards rewards,
         Vault vault
     ) internal
     {
@@ -243,7 +234,7 @@ contract PlanningKit is KitBase {
         projects.initialize(registry, vault, "autark");
         rangeVoting.initialize(addressBook, token, 50 * PCT256, 0, 1 minutes);
         allocations.initialize(addressBook, vault);
-        rewards.initialize(vault);
+        //rewards.initialize(vault);
     }
 
     function handleTPSPermissions(
@@ -252,7 +243,7 @@ contract PlanningKit is KitBase {
         Projects projects,
         RangeVotingApp rangeVoting,
         Allocations allocations,
-        Rewards rewards,
+        //Rewards rewards,
         Voting voting
     ) internal
     {
@@ -289,11 +280,11 @@ contract PlanningKit is KitBase {
         // emit InstalledApp(allocations, apps[1]);
 
         // Rewards Permissions
-        acl.createPermission(ANY_ENTITY, rewards, rewards.ADD_REWARD_ROLE(), root);
+        //acl.createPermission(ANY_ENTITY, rewards, rewards.ADD_REWARD_ROLE(), root);
 
     }
 
-    function handleVaultPermissions(Kernel dao, Projects projects, Allocations allocations, Rewards rewards, Vault vault) internal {
+    function handleVaultPermissions(Kernel dao, Projects projects, Allocations allocations, /*Rewards rewards,*/ Vault vault) internal {
         address root = msg.sender;
 
         ACL acl = ACL(dao.acl());
@@ -301,7 +292,7 @@ contract PlanningKit is KitBase {
         acl.createPermission(root, vault, vault.TRANSFER_ROLE(), this);
         acl.grantPermission(projects, vault, vault.TRANSFER_ROLE());
         acl.grantPermission(allocations, vault, vault.TRANSFER_ROLE());
-        acl.grantPermission(rewards, vault, vault.TRANSFER_ROLE());
+        //acl.grantPermission(rewards, vault, vault.TRANSFER_ROLE());
     }
 
     function handleCleanupPermissions(Kernel dao, ACL acl, address root) internal {

@@ -126,13 +126,7 @@ module.exports = async (
   let kit
   try {
     kit = await kitContract.new(
-      daoFactory.address,
       ens.address,
-      minimeFac.address,
-      aragonid,
-      appIds,
-      planningAppIds,
-      registry.address
     )
   } catch (err) {
     log('error with kit', err)
