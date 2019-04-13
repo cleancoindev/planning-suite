@@ -55,7 +55,7 @@ module.exports = {
       network_id: 15,
       host: 'localhost',
       port: 8545,
-      gas: 8.7e6,
+      gas: 8.6e6,
     },
     development: {
       host: 'localhost',
@@ -85,7 +85,7 @@ module.exports = {
   solc: {
     optimizer: {
       enabled: true,
-      runs: 200
+      runs: 400
     },
   },
 }
