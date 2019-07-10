@@ -104,10 +104,6 @@ const generateOpenDetails = (reward, openDetails) => () => {
   openDetails(reward)
 }
 
-const shortTransaction = transactionID =>
-  transactionID.substring(0,4) + '..' + transactionID.substring(transactionID.length - 4)
-
-
 const getSymbol = (tokens, reward) => {
   return tokens
     .reduce((symbol, token) => {
@@ -115,7 +111,7 @@ const getSymbol = (tokens, reward) => {
       else return symbol
     },'')
 }
-const MyRewardsWide = ({ onClaimReward, claimed, rewards, openDetails, network, tokens }) => (
+const MyRewardsWide = ({ onClaimReward, claimed, rewards, openDetails, tokens }) => (
   <Table
     style={{ width: '100%' }}
     header={
@@ -186,7 +182,7 @@ const MyRewardStatus = styled(Text.Block).attrs({
 })`
   margin-top: 5px;
 `
-const MyRewardsNarrow = ({ claimed, rewards, openDetails, network, tokens }) => (
+const MyRewardsNarrow = ({ rewards, openDetails, tokens }) => (
   <NarrowList>
     {rewards.map((reward, i) => (
       <NarrowListReward onClick={generateOpenDetails(reward, openDetails)} key={i}>
@@ -297,11 +293,6 @@ const ClickableTableRow = styled(TableRow)`
   :hover {
     cursor: pointer;
   }
-`
-const ClaimButtonText = styled(Text.Block).attrs({
-  size: 'small'
-})`
-  margin: 0px;
 `
 
 export default provideNetwork(MyRewards)

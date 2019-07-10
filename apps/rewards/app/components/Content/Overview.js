@@ -8,9 +8,7 @@ import {
   TableRow,
   TableCell,
   Text,
-  Viewport,
   theme,
-  Badge,
 } from '@aragon/ui'
 import { displayCurrency, getSymbol } from '../../utils/helpers'
 import {
@@ -26,7 +24,6 @@ import {
 import { MILLISECONDS_IN_A_MONTH, blocksToMilliseconds, } from '../../../../../shared/ui/utils'
 import { Empty } from '../Card'
 
-const fourthColumns = [ 'Next Payout', 'Status', 'Last Payout' ]
 const headersNames = fourth => [
   'Description',
   'Type',
@@ -118,7 +115,7 @@ const getDividendCycle = ({ startBlock, endBlock }) => {
   }
 }
 
-const RewardsTableNarrow = ({ title, tokens, rewards, fourthColumn, fourthColumnData, openDetails }) => (
+const RewardsTableNarrow = ({ tokens, rewards, fourthColumnData, openDetails }) => (
   <NarrowList>
     {rewards.map((reward, i) => (
       <NarrowListReward onClick={generateOpenDetails(reward, openDetails)} key={i}>
@@ -144,7 +141,7 @@ const RewardsTableNarrow = ({ title, tokens, rewards, fourthColumn, fourthColumn
   </NarrowList>
 )
 
-const RewardsTableWide = ({ title, tokens, rewards, fourthColumn, fourthColumnData, openDetails }) => {
+const RewardsTableWide = ({ tokens, rewards, fourthColumn, fourthColumnData, openDetails }) => {
   return (
     <Table
       style={{ width: '100%' }}
@@ -186,7 +183,6 @@ const RewardsTableWide = ({ title, tokens, rewards, fourthColumn, fourthColumnDa
   )}
 
 const displayNextPayout = reward => Intl.DateTimeFormat().format(reward.endDate)
-const displayStatus = reward => 'Pending'
 const displayLastPayout = reward => Intl.DateTimeFormat().format(reward.endDate)
 const futureRewards = rewards => rewards.filter(reward => reward.endDate > Date.now())
 const pastRewards = rewards => rewards.filter(reward => reward.endDate <= Date.now())

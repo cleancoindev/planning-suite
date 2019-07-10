@@ -1,15 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import Blockies from 'react-blockies'
-import { BigNumber } from 'bignumber.js'
 import { format } from 'date-fns'
 import {
   Button,
   Info,
   SidePanelSplit,
   Text,
-  theme,
   IconTime,
   IconCheck,
   IconFundraising,
@@ -188,30 +185,9 @@ class ViewReward extends React.Component {
     }
 }
 
-const Label = styled(Text).attrs({
-  smallcaps: true,
-  color: theme.textSecondary,
-})`
-  display: block;
-  margin-bottom: 10px;
-`
-
 const Creator = styled.div`
   display: flex;
   align-items: center;
-`
-const CreatorImg = styled.div`
-  margin-right: 20px;
-  canvas {
-    display: block;
-    border: 1px solid ${theme.contentBorder};
-    border-radius: 16px;
-  }
-  & + div {
-    a {
-      color: ${theme.accent};
-    }
-  }
 `
 
 const Part = styled.div`

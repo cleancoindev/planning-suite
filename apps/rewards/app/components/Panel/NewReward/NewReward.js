@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { Info, Text, TextInput, theme, SafeLink, DropDown, IconFundraising, Field } from '@aragon/ui'
+import { Info, TextInput, theme, SafeLink, DropDown, IconFundraising } from '@aragon/ui'
 
 import { Form, FormField } from '../../Form'
 import { DateInput, InputDropDown } from '../../../../../../shared/ui'
@@ -15,7 +15,7 @@ import {
   MILLISECONDS_IN_A_QUARTER,
   MILLISECONDS_IN_A_MONTH,
 } from '../../../../../../shared/ui/utils'
-import { displayCurrency, toCurrency } from '../../../utils/helpers'
+import { toCurrency } from '../../../utils/helpers'
 import { isAddress } from '../../../utils/web3-utils'
 import { ETHER_TOKEN_VERIFIED_BY_SYMBOL } from '../../../utils/verified-tokens'
 import TokenSelectorInstance from './TokenSelectorInstance'
