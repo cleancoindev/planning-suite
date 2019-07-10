@@ -289,7 +289,6 @@ const Main = styled.div`
 `
 const RewardsWrap = styled.div`
   flex-grow: 1;
-  /*background: #1DD9D5;*/
   > :not(:last-child) {
     margin-bottom: 20px;
   }

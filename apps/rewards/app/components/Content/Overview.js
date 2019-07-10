@@ -185,16 +185,6 @@ const RewardsTableWide = ({ title, tokens, rewards, fourthColumn, fourthColumnDa
     </Table>
   )}
 
-/*
-const leadersList = leaders => (
-  <LeadersLlist>
-    {leaders.sort((l1, l2) => l1.amount < l2.amount ? 1 : -1).map(leader => (
-      <li><span>{leader.name}</span><span style={{ fontWeight: 'bold' }}>$ {leader.amount}</span></li>
-    ))}
-  </LeadersLlist>
-)
-*/
-
 const displayNextPayout = reward => Intl.DateTimeFormat().format(reward.endDate)
 const displayStatus = reward => 'Pending'
 const displayLastPayout = reward => Intl.DateTimeFormat().format(reward.endDate)
@@ -251,15 +241,6 @@ const Overview = ({ tokens, rewards, convertRates, claims, newReward, openDetail
           />
         ))}
       </RewardsWrap>
-
-      {/*<LeaderBoardWrap>
-        <FieldTitle
-          style={{ borderBottom: '1px solid grey', marginBottom: '10px' }}
-        >
-          Leaderboard
-        </FieldTitle>
-        {leadersList(leaders)}
-      </LeaderBoardWrap> */}
     </OverviewMain>
   )
 }
@@ -275,7 +256,6 @@ const OverviewMain = styled.div`
 `
 const RewardsWrap = styled.div`
   flex-grow: 1;
-  /*background: #1DD9D5;*/
   > :not(:last-child) {
     margin-bottom: 20px;
   }
@@ -285,26 +265,5 @@ const ClickableTableRow = styled(TableRow)`
     cursor: pointer;
   }
 `
-/*
-const LeaderBoardWrap = styled.div`
-  ${breakpoint(
-    'medium',
-    `
-    width: 300px;
-    `
-  )};
 
-  width: 100%;
-  background: #8196FF;
-  padding: 10px;
-`
-
-const LeadersLlist = styled.ul`
-  list-style: none;
-  li {
-    display: flex;
-    justify-content: space-between;
-  }
-`
-*/
 export default Overview

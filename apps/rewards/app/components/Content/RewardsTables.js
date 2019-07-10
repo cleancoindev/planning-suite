@@ -82,10 +82,8 @@ const RewardDescription = styled(Text.Block)`
 const AverageItem = styled.div`
   text-align: center;
   margin: 2px;
-  /*background: orange;*/
 `
 const AverageRewardsTable = styled.div`
-  /*background: #FFF38E;*/
   padding: 10px;
   display: flex;
   justify-content: space-around;
