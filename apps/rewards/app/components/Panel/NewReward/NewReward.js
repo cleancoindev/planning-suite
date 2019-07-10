@@ -45,11 +45,8 @@ function getTokenProp(prop, { refTokens }, { customToken, referenceAsset }, chec
 
 class NewReward extends React.Component {
   static propTypes = {
-    vaultBalance: PropTypes.string.isRequired,
     onNewReward: PropTypes.func.isRequired,
   }
-
-
 
   constructor(props) {
     super(props)

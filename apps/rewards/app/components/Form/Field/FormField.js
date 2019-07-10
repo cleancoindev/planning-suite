@@ -21,7 +21,7 @@ const FormField = ({ input, label, hint, required, separator, width }) => {
             color={theme.accent}
             title="Required"
             style={{ marginLeft: '0.3rem' }}
-          > 
+          >
             *
           </Text>
         )}
@@ -43,7 +43,6 @@ const FieldContainer = styled.div`
 `
 
 FormField.propTypes = {
-  children: PropTypes.node,
   label: PropTypes.string,
   required: PropTypes.bool,
   hint: PropTypes.string,
