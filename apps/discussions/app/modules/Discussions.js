@@ -65,6 +65,7 @@ class MockDiscussionApi {
       author: ethereumAddress,
       createdAt: new Date(),
       revisions: [],
+      postCid: 'fake cid goes here',
       text,
     }
     const postIds = Object.keys(this.discussions[discussionThreadId]).sort(
